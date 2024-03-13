@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+<!--플로어변수 order는 커맨드객체 Order 의미-->
+<var name="order" class="com.springmvc.domain.Order"/> 
+
+
+	<action-state id="addCartToOrder">
+		<evaluate expression="cartServiceImpl.validateCart(requestParameters.cartId)" result="order.cart" />
+		<transition to="orderCartWarning" on-exception="com.springmvc.exception.CartException" /> <!--예외처리-->
+		<transition to="orderCustomerInfo"/> <!--정상처리-->
+	</action-state>
+
+
+<!--view state: 흐름단계에서 뷰를 보여주는 역할.
+요소내의 id 속성은 플로내에서 유일. 
+model 커맨드객체, var요소에 선언된 플로 변수
+view속성 사용, 출력 뷰 페이지 설정
+속성을 정의하지 않을때, 요소 내의 id속성이 뷰 페이지 동일-->
+
+	<view-state id="orderCustomerInfo" model="order"> 			<!--현재 뷰페이지 orderCustomerInfo-->
+		<transition on="customerInfo" to="orderShippingInfo" />	<!--이벤트customerInfo면, orderShippingInfo로 이동-->
+	</view-state>
+	
+	<view-state id="orderShippingInfo" model="order">
+		<transition on="shippingInfo" to="orderConfirmation" />
+		<transition on="backToCustomerInfo" to="orderCustomerInfo" />
+	</view-state>
+	
+	<view-state id="orderConfirmation">
+		<transition on="orderConfirmed" to="confirmOrder" />
+		<transition on="backToShippingInfo" to="orderShippingInfo"/>
+	</view-state>
+	
+	<action-state id="confirmOrder">
+		 <!--  메서드를 실행한 후 반환 값을 커맨드 객체 order의 orderId 속성에 저장 -->
+		<evaluate expression="orderServiceImpl.saveOrder(order)" result="order.orderId" />
+		<transition to="orderFinished" />
+	</action-state>
+
+	<view-state id="orderCartWarning">
+		<transition to="endState" />
+	</view-state>
+	
+	<view-state id="orderFinished" model="order">
+		<transition to="endState" />
+	</view-state>
+	
+	<end-state id="endState" />
+	<end-state id="orderCancelled" view="orderCartWarning.jsp" />
+	
+	<global-transitions>
+		<transition on="cancel" to="endState"/>
+	</global-transitions>
+
+</flow>
