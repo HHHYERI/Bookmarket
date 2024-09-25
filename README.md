@@ -1,3 +1,9 @@
+노션 
+https://broadleaf-periwinkle-hyeri.notion.site/Spring-mvc-Pj-BookMarket-10cebb5325fe80e5b34ad5b25bd255db?pvs=4
+
+日本語はこちら
+https://broadleaf-periwinkle-hyeri.notion.site/JP-Spring-mvc-Pj-BookMarket-abd9e9ad466c4f6e8c881091909c2cd7?pvs=4
+ 
  📖 상세 내용
 
 도서 관리 및 쇼핑이 가능한 도서쇼핑몰 웹 애플리케이션 입니다.
